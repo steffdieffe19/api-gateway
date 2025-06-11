@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: service-a
+          uri: http://localhost:8080
+          predicates:
+            - Path=/service-a/**
+          filters:
+            - StripPrefix=1
+
+        - id: service-b
+          uri: http://localhost:8081
+          predicates:
+            - Path=/service-b/**
+          filters:
+            - StripPrefix=1
