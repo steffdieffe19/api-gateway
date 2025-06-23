@@ -20,10 +20,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-//    public User findByUsername(String username) {
-//        return userRepository.findByUsername(username);
-//    }
+
     public boolean existsByUsername(String username) {
         return userRepository.findByUsername(username)      .isPresent();
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 }

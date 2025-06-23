@@ -31,7 +31,7 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authenticationRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -39,8 +39,12 @@ public class AuthController {
                             authenticationRequest.getPassword())
             );
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-            String token = jwtService.generateToken(userDetails);
+            // Recupera l'utente dal DB
+            User user = userService.findByUsername(authenticationRequest.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(user.getUsername());
+
+            // Passa anche il ruolo al JwtUtil
+            String token = jwtService.generateToken(userDetails, user.getRole());
 
             return ResponseEntity.ok(new AuthenticationResponse(token));
         } catch (Exception e) {
@@ -56,7 +60,7 @@ public class AuthController {
             }
 
             if (user.getRole() == null || user.getRole().isEmpty()) {
-                user.setRole("USER");  // Default role
+                user.setRole("USER");
             }
 
             userService.save(user);

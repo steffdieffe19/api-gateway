@@ -11,9 +11,8 @@ public class JwtService {
     @Autowired
     private JwtUtil jwtUtil;
 
-    public String generateToken(UserDetails userDetails) {
-        return jwtUtil.generateToken(userDetails);
+    public String generateToken(UserDetails userDetails, String role) {
+        return jwtUtil.generateToken(userDetails, role);
     }
-
 
 }
